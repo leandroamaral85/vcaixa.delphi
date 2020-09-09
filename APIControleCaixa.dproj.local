@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2020/09/08 22:32:27.894,=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/09/08 22:33:03.797,=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2020/09/08 22:35:19.459,C:\Users\leand\Desktop\vcaixa.dev\UwmPrincipal.pas=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2020/09/08 22:35:19.459,C:\Users\leand\Desktop\vcaixa.dev\UwmPrincipal.dfm=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>2020/09/08 22:39:11.956,C:\Users\leand\Desktop\vcaixa.dev\Controllers\Controller.Categorias.pas=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/09/08 22:39:42.552,C:\Users\leand\Desktop\vcaixa.dev\APIControleCaixa.dproj=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2020/09/08 22:51:27.660,=C:\Users\leand\Desktop\vcaixa.dev\Unit1.pas</Transaction>
+    <Transaction>2020/09/08 22:52:06.656,C:\Users\leand\Desktop\vcaixa.dev\UdmPrincipal.dfm=C:\Users\leand\Desktop\vcaixa.dev\Unit1.dfm</Transaction>
+    <Transaction>2020/09/08 22:52:06.656,C:\Users\leand\Desktop\vcaixa.dev\UdmPrincipal.pas=C:\Users\leand\Desktop\vcaixa.dev\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>
