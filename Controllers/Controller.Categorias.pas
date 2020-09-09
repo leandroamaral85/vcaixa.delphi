@@ -40,7 +40,7 @@ type
 implementation
 
 uses
-  System.SysUtils, MVCFramework.Logger, System.StrUtils;
+  System.SysUtils, MVCFramework.Logger, System.StrUtils, Service.Categorias;
 
 
 procedure TCategoriasController.OnAfterAction(Context: TWebContext; const AActionName: string);
@@ -64,7 +64,6 @@ begin
 end;
 
 procedure TCategoriasController.CreateCategoria;
-
 begin
   //todo: create a new customer
 end;

@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{8DBF8014-C4CC-4003-9C39-9ED0AC5C0A74}</ProjectGuid>
         <ProjectVersion>18.8</ProjectVersion>
-        <FrameworkType>None</FrameworkType>
+        <FrameworkType>VCL</FrameworkType>
         <MainSource>APIControleCaixa.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -42,7 +42,7 @@
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <UsingDelphiRTL>true</UsingDelphiRTL>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
@@ -89,6 +89,16 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Models\UCategorias.pas"/>
+        <DCCReference Include="Models\UEmpresas.pas"/>
+        <DCCReference Include="Models\UMovimentacoes.pas"/>
+        <DCCReference Include="Models\UUsuarios.pas"/>
+        <DCCReference Include="Controllers\Controller.Empresas.pas"/>
+        <DCCReference Include="Models\DAO\DAO.Categorias.pas"/>
+        <DCCReference Include="Models\DAO\DAO.Empresas.pas"/>
+        <DCCReference Include="Models\DAO\DAO.Movimentacoes.pas"/>
+        <DCCReference Include="Models\DAO\DAO.Usuarios.pas"/>
+        <DCCReference Include="Services\Service.Categorias.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

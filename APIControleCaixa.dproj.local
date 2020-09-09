@@ -1,14 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions>
-    <Transaction>2020/09/08 22:32:27.894,=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/09/08 22:33:03.797,=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
-    <Transaction>2020/09/08 22:35:19.459,C:\Users\leand\Desktop\vcaixa.dev\UwmPrincipal.pas=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
-    <Transaction>2020/09/08 22:35:19.459,C:\Users\leand\Desktop\vcaixa.dev\UwmPrincipal.dfm=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
-    <Transaction>2020/09/08 22:39:11.956,C:\Users\leand\Desktop\vcaixa.dev\Controllers\Controller.Categorias.pas=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/09/08 22:39:42.552,C:\Users\leand\Desktop\vcaixa.dev\APIControleCaixa.dproj=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>2020/09/08 22:51:27.660,=C:\Users\leand\Desktop\vcaixa.dev\Unit1.pas</Transaction>
-    <Transaction>2020/09/08 22:52:06.656,C:\Users\leand\Desktop\vcaixa.dev\UdmPrincipal.dfm=C:\Users\leand\Desktop\vcaixa.dev\Unit1.dfm</Transaction>
-    <Transaction>2020/09/08 22:52:06.656,C:\Users\leand\Desktop\vcaixa.dev\UdmPrincipal.pas=C:\Users\leand\Desktop\vcaixa.dev\Unit1.pas</Transaction>
+	<Transactions>
+    <Transaction>2020/09/08 22:32:27.000.894,=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/09/08 22:33:03.000.797,=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2020/09/08 22:35:19.000.459,C:\Users\leand\Desktop\vcaixa.dev\UwmPrincipal.dfm=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>2020/09/08 22:35:19.000.459,C:\Users\leand\Desktop\vcaixa.dev\UwmPrincipal.pas=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2020/09/08 22:39:11.000.956,C:\Users\leand\Desktop\vcaixa.dev\Controllers\Controller.Categorias.pas=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/09/08 22:39:42.000.552,C:\Users\leand\Desktop\vcaixa.dev\APIControleCaixa.dproj=C:\Users\leand\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2020/09/08 22:51:27.000.660,=C:\Users\leand\Desktop\vcaixa.dev\Unit1.pas</Transaction>
+    <Transaction>2020/09/08 22:52:06.000.656,C:\Users\leand\Desktop\vcaixa.dev\UdmPrincipal.dfm=C:\Users\leand\Desktop\vcaixa.dev\Unit1.dfm</Transaction>
+    <Transaction>2020/09/08 22:52:06.000.656,C:\Users\leand\Desktop\vcaixa.dev\UdmPrincipal.pas=C:\Users\leand\Desktop\vcaixa.dev\Unit1.pas</Transaction>
+    <Transaction>2020/09/09 16:52:12.000.848,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\UMovimentacoes.pas</Transaction>
+    <Transaction>2020/09/09 16:52:12.000.773,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\UCategorias.pas</Transaction>
+    <Transaction>2020/09/09 16:52:12.000.884,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\UUsuarios.pas</Transaction>
+    <Transaction>2020/09/09 16:52:12.000.813,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\UEmpresas.pas</Transaction>
+    <Transaction>2020/09/09 16:52:47.000.721,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\UCategoriasDAO.pas</Transaction>
+    <Transaction>2020/09/09 16:52:47.000.756,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\UUsuariosDAO.pas</Transaction>
+    <Transaction>2020/09/09 16:52:47.000.744,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\UMovimentacoesDAO.pas</Transaction>
+    <Transaction>2020/09/09 16:52:47.000.732,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\UEmpresasDAO.pas</Transaction>
+    <Transaction>2020/09/09 17:33:54.000.777,=C:\Users\Leo\Desktop\vcaixa.delphi\Unit1.pas</Transaction>
+    <Transaction>2020/09/09 17:34:58.000.841,C:\Users\Leo\Desktop\vcaixa.delphi\Unit1.pas=C:\Users\Leo\Desktop\vcaixa.delphi\Controllers\Controller.Empresas.pas</Transaction>
+    <Transaction>2020/09/09 17:38:16.941,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\DAO.Categorias.pas</Transaction>
+    <Transaction>2020/09/09 17:38:16.989,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\DAO.Empresas.pas</Transaction>
+    <Transaction>2020/09/09 17:38:17.040,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\DAO.Movimentacoes.pas</Transaction>
+    <Transaction>2020/09/09 17:38:17.087,=C:\Users\Leo\Desktop\vcaixa.delphi\Models\DAO\DAO.Usuarios.pas</Transaction>
+    <Transaction>2020/09/09 17:41:48.038,=C:\Users\Leo\Desktop\vcaixa.delphi\Unit1.pas</Transaction>
+    <Transaction>2020/09/09 17:42:11.210,C:\Users\Leo\Desktop\vcaixa.delphi\Services\Service.Categorias.pas=C:\Users\Leo\Desktop\vcaixa.delphi\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>
