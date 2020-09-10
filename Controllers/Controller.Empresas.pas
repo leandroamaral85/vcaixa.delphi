@@ -6,32 +6,30 @@ uses
   MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons;
 
 type
-
   [MVCPath('/api')]
-  EmpresasController = class(TMVCController) 
+  TEmpresasController = class(TMVCController)
   protected
     procedure OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
     procedure OnAfterAction(Context: TWebContext; const AActionName: string); override;
 
   public
-    //Sample CRUD Actions for a "Empresa" entity
-    [MVCPath('/Empresas')]
+    [MVCPath('/empresas')]
     [MVCHTTPMethod([httpGET])]
     procedure GetEmpresas;
 
-    [MVCPath('/Empresas/($id)')]
+    [MVCPath('/empresas/($id)')]
     [MVCHTTPMethod([httpGET])]
     procedure GetEmpresa(id: Integer);
 
-    [MVCPath('/Empresas')]
+    [MVCPath('/empresas')]
     [MVCHTTPMethod([httpPOST])]
     procedure CreateEmpresa;
 
-    [MVCPath('/Empresas/($id)')]
+    [MVCPath('/empresas/($id)')]
     [MVCHTTPMethod([httpPUT])]
     procedure UpdateEmpresa(id: Integer);
 
-    [MVCPath('/Empresas/($id)')]
+    [MVCPath('/empresas/($id)')]
     [MVCHTTPMethod([httpDELETE])]
     procedure DeleteEmpresa(id: Integer);
 
@@ -40,49 +38,106 @@ type
 implementation
 
 uses
-  System.SysUtils, MVCFramework.Logger, System.StrUtils;
+  System.SysUtils, MVCFramework.Logger, System.StrUtils, Service.Empresas,
+  Model.Empresas, Model.Resposta;
 
-procedure EmpresasController.OnAfterAction(Context: TWebContext; const AActionName: string);
+procedure TEmpresasController.OnAfterAction(Context: TWebContext; const AActionName: string);
 begin
-  { Executed after each action }
-  inherited;
+   inherited;
 end;
 
-procedure EmpresasController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
+procedure TEmpresasController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
 begin
-  { Executed before each action
-    if handled is true (or an exception is raised) the actual
-    action will not be called }
-  inherited;
+   inherited;
 end;
 
-//Sample CRUD Actions for a "Empresa" entity
-procedure EmpresasController.GetEmpresas;
+procedure TEmpresasController.GetEmpresas;
 begin
-  //todo: render a list of Empresas
+   try
+      Render<TEmpresa>(TEmpresasService.getInstancia.BuscaTodos, True);
+   except
+      On E: Exception do
+         Render(400,  TResposta.MontaResposta('Não foi possível obter a lista de '+
+            'empresas: ' + E.Message), True);
+   end;
 end;
 
-procedure EmpresasController.GetEmpresa(id: Integer);
+procedure TEmpresasController.GetEmpresa(id: Integer);
 begin
-  //todo: render the Empresa by id
+   try
+      Render(200, TEmpresasService.getInstancia.BuscaPeloID(id), True);
+   except
+      On E: Exception do
+         Render(400, TResposta.MontaResposta('Não foi possível obter a '+
+            'empresa: ' + E.Message), True);
+   end;
 end;
 
-procedure EmpresasController.CreateEmpresa;
-
+procedure TEmpresasController.CreateEmpresa;
+var
+   vEmpresa: TEmpresa;
 begin
-  //todo: create a new Empresa
+   try
+      vEmpresa := nil;
+      try
+         if Trim(Context.Request.Body) = '' then
+            raise Exception.Create('Não foram informados dados para a operação');
+
+         vEmpresa := Context.Request.BodyAs<TEmpresa>;
+         if TEmpresasService.getInstancia.CriaEmpresa(vEmpresa) then
+            Render(201, TResposta.MontaResposta('Empresa cadastrada com sucesso'),
+               True);
+      except
+         On E: Exception do
+         begin
+            Render(400, TResposta.MontaResposta('Não foi possível cadastrar a '+
+               'empresa: ' + E.Message), True);
+         end;
+      end;
+   finally
+      if Assigned(vEmpresa) then
+         FreeAndNil(vEmpresa);
+   end;
 end;
 
-procedure EmpresasController.UpdateEmpresa(id: Integer);
+procedure TEmpresasController.UpdateEmpresa(id: Integer);
+var
+   vEmpresa: TEmpresa;
 begin
-  //todo: update Empresa by id
+   try
+      vEmpresa := nil;
+      try
+         if Trim(Context.Request.Body) = '' then
+            raise Exception.Create('Não foram informados dados para a operação');
+
+         vEmpresa := Context.Request.BodyAs<TEmpresa>;
+         if TEmpresasService.getInstancia.AtualizaEmpresa(id, vEmpresa) then
+            Render(200, TResposta.MontaResposta('Empresa atualizada com sucesso'),
+               True);
+      except
+         On E: Exception do
+         begin
+            Render(400, TResposta.MontaResposta('Não foi possível atualizar os dados '+
+               'da empresa: ' + E.Message), True);
+         end;
+      end;
+   finally
+      if Assigned(vEmpresa) then
+         FreeAndNil(vEmpresa);
+   end;
 end;
 
-procedure EmpresasController.DeleteEmpresa(id: Integer);
+procedure TEmpresasController.DeleteEmpresa(id: Integer);
 begin
-  //todo: delete Empresa by id
+   try
+      if TEmpresasService.getInstancia.ExcluiEmpresa(id) then
+         Render(200, TResposta.MontaResposta('Empresa excluída com sucesso'),
+            True);
+   except
+      On E: Exception do
+         Render(400, TResposta.MontaResposta('Não foi possível excluir a '+
+            'empresa: ' + E.Message), True);
+   end;
 end;
-
-
 
 end.

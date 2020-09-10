@@ -3,10 +3,11 @@ unit DAO.Usuarios;
 interface 
 
 uses SqlExpr, SimpleDS, Classes, SysUtils, DateUtils,
-     StdCtrls, UUsuarios, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+     StdCtrls, Model.Usuarios, FireDAC.Stan.Intf, FireDAC.Stan.Option,
      FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
      FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.PG,
-     FireDAC.Phys.PGDef, FireDAC.ConsoleUI.Wait, Data.DB, FireDAC.Comp.Client;
+     FireDAC.Phys.PGDef, FireDAC.ConsoleUI.Wait, Data.DB, FireDAC.Comp.Client,
+     System.Generics.Collections;
 
 type
    TUsuariosDao = Class 
@@ -19,94 +20,82 @@ type
          Function RetornaSqlDeleta : String;
       Public
          Constructor Create(pConexao : TFDConnection);
-         Function RetornaColecao : TColUsuarios;
-         Function Retorna(pId : Integer) : TUsuarios;
-         Function Insere(pUsuarios: TUsuarios) : Boolean;
-         Function InsereColecao(pUsuarios: TColUsuarios) : Boolean;
-         Function Atualiza(pUsuarios: TUsuarios) : Boolean;
+         Function RetornaColecao : TObjectList<TUsuario>;
+         Function Retorna(pId : Integer) : TUsuario;
+         Function RetornaPeloEmail(pEmail : String) : TUsuario;
+         Function Insere(pUsuarios: TUsuario) : Boolean;
+         Function InsereColecao(pUsuarios: TObjectList<TUsuario>) : Boolean;
+         Function Atualiza(pUsuarios: TUsuario) : Boolean;
          Function Deleta(pId : Integer) : Boolean;
-         Function AtualizaColecao(pUsuarios: TColUsuarios):Boolean;
+         Function AtualizaColecao(pUsuarios: TObjectList<TUsuario>):Boolean;
+         Function Existe(pId: Integer): Boolean;
       end;
-implementation 
+implementation
 
 Function TUsuariosDao.RetornaSql : String;
 begin
    Result :=
-      'Select  *          '+
-      'From Usuarios      ';
+      'SELECT  *          '+
+      'FROM USUARIOS      '+
+      'ORDER BY ID        ';
 End;
 
 Function TUsuariosDao.RetornaSqlComChave : String;
 begin
    Result :=
-      'Select *              '+
-      'From Usuarios         '+
-      'Where                 '+
-      ' ID = :ID             ';
+      'SELECT *              '+
+      'FROM USUARIOS         '+
+      'WHERE ID = :ID        ';
 End;
 
 Function TUsuariosDao.RetornaSqlInsert : String;
 begin
    Result := 
-      'INSERT INTO Usuarios '+
-      '(                    '+
-      'Usuarios.Nome,       '+
-      'Usuarios.Email,      '+
-      'Usuarios.Senha,      '+
-      'Usuarios.Empresa_id  '+
-      ')                    '+
-      'VALUES               '+
-      '(                    '+
-      ':Nome,               '+
-      ':Email,              '+
-      ':Senha,              '+
-      ':Empresa_id          '+
-      ')                    ';
+      'INSERT INTO USUARIOS (NOME, EMAIL, SENHA, EMPRESA_ID) '+
+      'VALUES (:NOME, :EMAIL, :SENHA, :EMPRESA_ID)           ';
 End;
 
 Function TUsuariosDao.RetornaSqlUpdate : String;
 begin
-   Result := 
-      'UPDATE Usuarios SET                  '+
-      'Usuarios.Nome        = :Nome,        '+
-      'Usuarios.Email       = :Email,       '+
-      'Usuarios.Senha       = :Senha,       '+
-      'Usuarios.Empresa_id  = :Empresa_id   '+
-      'Where                                '+
-      ' ID = :ID                            ';
+   Result :=
+      'UPDATE USUARIOS              '+
+      'SET NOME = :NOME,            '+
+      '    EMAIL = :EMAIL,          '+
+      '    SENHA = :SENHA,          '+
+      '    EMPRESA_ID = :EMPRESA_ID '+
+      'WHERE ID = :ID               ';
 End;
 
 Function TUsuariosDao.RetornaSqlDeleta : String;
 begin
-   Result := 
-      'Delete From Usuarios  '+
-      'Where                 '+
-      ' ID = :ID             ';
+   Result :=
+      'DELETE FROM USUARIOS  '+
+      'WHERE ID = :ID        ';
 end;
 
-function TUsuariosDao.RetornaColecao : TColUsuarios;
+function TUsuariosDao.RetornaColecao : TObjectList<TUsuario>;
 var
    QueryUsuarios : TFDQuery;
-   ObjUsuarios : TUsuarios;
+   ObjUsuarios : TUsuario;
 begin
    Result := nil;
    QueryUsuarios := TFDQuery.Create(Nil);
+   Result := TObjectList<TUsuario>.Create;
    try
       QueryUsuarios.Connection := Self.vConexao;
       QueryUsuarios.Sql.Text := RetornaSql;
       QueryUsuarios.Open;
       if QueryUsuarios.IsEmpty then
          Exit;
-      Result := TColUsuarios.Create;
       while Not(QueryUsuarios).Eof do
       begin
-         ObjUsuarios := TUsuarios.Create;
+         ObjUsuarios := TUsuario.Create;
          ObjUsuarios.Id          := QueryUsuarios.FieldByName('Id'         ).AsInteger;
          ObjUsuarios.Nome        := QueryUsuarios.FieldByName('Nome'       ).AsString;
          ObjUsuarios.Email       := QueryUsuarios.FieldByName('Email'      ).AsString;
          ObjUsuarios.Senha       := QueryUsuarios.FieldByName('Senha'      ).AsString;
          ObjUsuarios.Empresa_id  := QueryUsuarios.FieldByName('Empresa_id' ).AsInteger;
-         Result.Adiciona(ObjUsuarios);
+         Result.Add(ObjUsuarios);
          QueryUsuarios.Next;
       end;
    finally
@@ -119,7 +108,7 @@ begin
    Self.vConexao := pConexao;
 end;
 
-function TUsuariosDao.Retorna(pId : Integer) : TUsuarios;
+function TUsuariosDao.Retorna(pId : Integer) : TUsuario;
 var
    QueryUsuarios : TFDQuery;
 begin
@@ -132,7 +121,7 @@ begin
       QueryUsuarios.Open;
       if QueryUsuarios.IsEmpty then
          Exit;
-      Result := TUsuarios.Create;
+      Result := TUsuario.Create;
       Result.Id          := QueryUsuarios.FieldByName('Id'         ).AsInteger;
       Result.Nome        := QueryUsuarios.FieldByName('Nome'       ).AsString;
       Result.Email       := QueryUsuarios.FieldByName('Email'      ).AsString;
@@ -143,7 +132,34 @@ begin
    end;
 end;
 
-Function TUsuariosDao.Insere(pUsuarios: TUsuarios) : Boolean;
+function TUsuariosDao.RetornaPeloEmail(pEmail : String) : TUsuario;
+var
+   QueryUsuarios : TFDQuery;
+begin
+   Result := Nil;
+   QueryUsuarios := TFDQuery.Create(Nil);
+   try
+      QueryUsuarios.Connection := Self.vConexao;
+      QueryUsuarios.Sql.Text :=
+         'SELECT *             '+
+         'FROM USUARIOS        '+
+         'WHERE EMAIL = :EMAIL ';
+      QueryUsuarios.ParamByName('EMAIL').AsString := pEmail;
+      QueryUsuarios.Open;
+      if QueryUsuarios.IsEmpty then
+         Exit;
+      Result := TUsuario.Create;
+      Result.Id          := QueryUsuarios.FieldByName('Id'         ).AsInteger;
+      Result.Nome        := QueryUsuarios.FieldByName('Nome'       ).AsString;
+      Result.Email       := QueryUsuarios.FieldByName('Email'      ).AsString;
+      Result.Senha       := QueryUsuarios.FieldByName('Senha'      ).AsString;
+      Result.Empresa_id  := QueryUsuarios.FieldByName('Empresa_id' ).AsInteger;
+   finally
+      FreeAndNil(QueryUsuarios);
+   end;
+end;
+
+Function TUsuariosDao.Insere(pUsuarios: TUsuario) : Boolean;
 var
    QueryUsuarios : TFDQuery;
 begin
@@ -171,20 +187,20 @@ begin
    Result := True;
 end;
 
-Function TUsuariosDao.InsereColecao(pUsuarios: TColUsuarios) : Boolean;
+Function TUsuariosDao.InsereColecao(pUsuarios: TObjectList<TUsuario>) : Boolean;
 var
    indice: Integer;
 begin
    Result := False;
    for indice := 0 to pUsuarios.count -1 do
    begin
-      if not Self.Insere(pUsuarios.Retorna(Indice)) then
+      if not Self.Insere(pUsuarios[Indice]) then
          Exit;
    end;
    Result := True;
 end;
 
-Function TUsuariosDao.Atualiza(pUsuarios: TUsuarios) : Boolean;
+Function TUsuariosDao.Atualiza(pUsuarios: TUsuario) : Boolean;
 var
    QueryUsuarios : TFDQuery;
 begin
@@ -236,18 +252,35 @@ begin
    Result := True;
 end;
 
-Function TUsuariosDao.AtualizaColecao(pUsuarios: TColUsuarios):Boolean;
+Function TUsuariosDao.AtualizaColecao(pUsuarios: TObjectList<TUsuario>):Boolean;
 var
    indice: Integer;
 begin
    Result := True;
    for indice := 0 to pUsuarios.count -1 do
    begin
-      if not Self.Atualiza(pUsuarios.Retorna(Indice)) then
+      if not Self.Atualiza(pUsuarios[Indice]) then
       begin
          Result := False;
          Exit;
       end;
+   end;
+end;
+
+function TUsuariosDao.Existe(pId : Integer) : Boolean;
+var
+   QueryUsuarios : TFDQuery;
+begin
+   Result := false;
+   QueryUsuarios := TFDQuery.Create(Nil);
+   try
+      QueryUsuarios.Connection := Self.vConexao;
+      QueryUsuarios.Sql.Text := RetornaSqlComChave;
+      QueryUsuarios.ParamByName('ID').AsInteger := pId;
+      QueryUsuarios.Open;
+      Result := not QueryUsuarios.IsEmpty;
+   finally
+      FreeAndNil(QueryUsuarios);
    end;
 end;
 

@@ -3,10 +3,11 @@ unit DAO.Categorias;
 interface 
 
 uses SqlExpr, SimpleDS, Classes, SysUtils, DateUtils,
-     StdCtrls, UCategorias, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+     StdCtrls, Model.Categorias, FireDAC.Stan.Intf, FireDAC.Stan.Option,
      FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
      FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.PG,
-     FireDAC.Phys.PGDef, FireDAC.ConsoleUI.Wait, Data.DB, FireDAC.Comp.Client;
+     FireDAC.Phys.PGDef, FireDAC.ConsoleUI.Wait, Data.DB, FireDAC.Comp.Client,
+     System.Generics.Collections;
 
 type
    TCategoriasDao = Class
@@ -19,76 +20,75 @@ type
          Function RetornaSqlDeleta : String;
       Public
          Constructor Create(pConexao : TFDConnection);
-         Function RetornaColecao : TColCategorias;
-         Function Retorna(pId : Integer) : TCategorias;
-         Function Insere(pCategorias: TCategorias) : Boolean;
-         Function InsereColecao(pCategorias: TColCategorias) : Boolean;
-         Function Atualiza(pCategorias: TCategorias) : Boolean;
+         Function RetornaColecao : TObjectList<TCategoria>;
+         Function Retorna(pId : Integer) : TCategoria;
+         Function Insere(pCategorias: TCategoria) : Boolean;
+         Function InsereColecao(pCategorias: TObjectList<TCategoria>) : Boolean;
+         Function Atualiza(pCategorias: TCategoria) : Boolean;
          Function Deleta(pId : Integer) : Boolean;
-         Function AtualizaColecao(pCategorias: TColCategorias):Boolean;
+         Function AtualizaColecao(pCategorias: TObjectList<TCategoria>):Boolean;
+         Function Existe(pId: Integer): Boolean;
       end;
 implementation 
 
 Function TCategoriasDao.RetornaSql : String;
 begin
    Result := 
-      'Select *         '+
-      'From Categorias  ';
+      'SELECT *         '+
+      'FROM CATEGORIAS  '+
+      'ORDER BY ID      ';
 End;
 
 Function TCategoriasDao.RetornaSqlComChave : String;
 begin
    Result :=
-      'Select  *        '+
-      'From Categorias  '+
-      'Where            '+
-      ' ID = :ID        ';
+      'SELECT  *        '+
+      'FROM CATEGORIAS  '+
+      'WHERE ID = :ID   ';
 End;
 
 Function TCategoriasDao.RetornaSqlInsert : String;
 begin
    Result :=
-     'INSERT INTO Categorias (Categorias.Nome)  '+
-     'VALUES (:Nome)                            ';
+      'INSERT INTO CATEGORIAS (NOME)  '+
+      'VALUES (:NOME)                 ';
 End;
 
 Function TCategoriasDao.RetornaSqlUpdate : String;
 begin
    Result := 
-      'UPDATE Categorias SET      '+
-      'Categorias.Nome  = :Nome   '+
-      'Where                      '+
-      ' ID = :ID                  ';
+      'UPDATE CATEGORIAS '+
+      'SET NOME = :NOME  '+
+      'WHERE ID = :ID    ';
 End;
 
 Function TCategoriasDao.RetornaSqlDeleta : String;
 begin
    Result :=
-      'Delete From Categorias   '+
-      'Where                    '+
-      ' ID = :ID                ';
+      'DELETE FROM CATEGORIAS   '+
+      'WHERE ID = :ID           ';
 end;
 
-function TCategoriasDao.RetornaColecao : TColCategorias;
+function TCategoriasDao.RetornaColecao : TObjectList<TCategoria>;
 var
    QueryCategorias : TFdQuery;
-   ObjCategorias : TCategorias;
+   ObjCategorias : TCategoria;
 begin
    Result := nil;
    QueryCategorias := TFDQuery.Create(Nil);
+   Result := TObjectList<TCategoria>.Create;
    try
       QueryCategorias.Connection := Self.vConexao;
       QueryCategorias.Sql.Text := RetornaSql;
       QueryCategorias.Open;
       if QueryCategorias.IsEmpty then
          Exit;
-      Result := TColCategorias.Create;
       while Not(QueryCategorias).Eof do
       begin
-         ObjCategorias := TCategorias.Create;
+         ObjCategorias := TCategoria.Create;
          ObjCategorias.Id    := QueryCategorias.FieldByName('Id'  ).AsInteger;
          ObjCategorias.Nome  := QueryCategorias.FieldByName('Nome').AsString;
-         Result.Adiciona(ObjCategorias);
+         Result.Add(ObjCategorias);
          QueryCategorias.Next;
       end;
    finally
@@ -101,7 +101,7 @@ begin
    Self.vConexao := pConexao;
 end;
 
-function TCategoriasDao.Retorna(pId : Integer) : TCategorias;
+function TCategoriasDao.Retorna(pId : Integer) : TCategoria;
 var
    QueryCategorias : TFdQuery;
 begin
@@ -114,7 +114,7 @@ begin
       QueryCategorias.Open;
       if QueryCategorias.IsEmpty then
          Exit;
-      Result := TCategorias.Create;
+      Result := TCategoria.Create;
       Result.Id    := QueryCategorias.FieldByName('Id'  ).AsInteger;
       Result.Nome  := QueryCategorias.FieldByName('Nome').AsString;
    finally
@@ -122,7 +122,7 @@ begin
    end;
 end;
 
-Function TCategoriasDao.Insere(pCategorias: TCategorias) : Boolean;
+Function TCategoriasDao.Insere(pCategorias: TCategoria) : Boolean;
 var
    QueryCategorias : TFdQuery;
 begin
@@ -148,20 +148,20 @@ begin
    Result := True;
 end;
 
-Function TCategoriasDao.InsereColecao(pCategorias: TColCategorias) : Boolean;
+Function TCategoriasDao.InsereColecao(pCategorias: TObjectList<TCategoria>) : Boolean;
 var
    indice: Integer;
 begin
    Result := False;
    for indice := 0 to pCategorias.count -1 do
    begin
-      if not Self.Insere(pCategorias.Retorna(Indice)) then
+      if not Self.Insere(pCategorias[Indice]) then
          Exit;
    end;
    Result := True;
 end;
 
-Function TCategoriasDao.Atualiza(pCategorias: TCategorias) : Boolean;
+Function TCategoriasDao.Atualiza(pCategorias: TCategoria) : Boolean;
 var
    QueryCategorias : TFdQuery;
 begin
@@ -210,18 +210,35 @@ begin
    Result := True;
 end;
 
-Function TCategoriasDao.AtualizaColecao(pCategorias: TColCategorias):Boolean;
+Function TCategoriasDao.AtualizaColecao(pCategorias: TObjectList<TCategoria>):Boolean;
 var
    indice: Integer;
 begin
    Result := True;
-   for indice := 0 to pCategorias.count -1 do
+   for indice := 0 to pCategorias.Count -1 do
    begin
-      if not Self.Atualiza(pCategorias.Retorna(Indice)) then
+      if not Self.Atualiza(pCategorias[Indice]) then
       begin
          Result := False;
          Exit;
       end;
+   end;
+end;
+
+function TCategoriasDao.Existe(pId : Integer) : Boolean;
+var
+   QueryCategorias : TFdQuery;
+begin
+   Result := false;
+   QueryCategorias := TFdQuery.Create(Nil);
+   try
+      QueryCategorias.Connection := Self.vConexao;
+      QueryCategorias.Sql.Text := RetornaSqlComChave;
+      QueryCategorias.ParamByName('ID').AsInteger := pId;
+      QueryCategorias.Open;
+      Result := not QueryCategorias.IsEmpty;
+   finally
+      FreeAndNil(QueryCategorias);
    end;
 end;
 end.

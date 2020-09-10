@@ -25,8 +25,13 @@ implementation
 
 {$R *.dfm}
 
-uses 
+uses
   Controller.Categorias,
+  Controller.Empresas,
+  Controller.Movimentacoes,
+  Controller.Usuarios,
+  Controller.ResumoDiario,
+  Controller.Login,
   System.IOUtils, 
   MVCFramework.Commons, 
   MVCFramework.Middleware.StaticFiles, 
@@ -61,9 +66,14 @@ begin
       Config[TMVCConfigKey.MaxRequestSize] := IntToStr(TMVCConstants.DEFAULT_MAX_REQUEST_SIZE);
     end);
   FMVC.AddController(TCategoriasController);
+  FMVC.AddController(TEmpresasController);
+  FMVC.AddController(TMovimentacoesController);
+  FMVC.AddController(TUsuariosController);
+  FMVC.AddController(TResumoDiarioController);
+  FMVC.AddController(TLoginController);
 
   // Required to enable serving of static files
-  // Remove the following middleware declaration if you don't  
+  // Remove the following middleware declaration if you don't
   // serve static files from this dmvcframework service.
   FMVC.AddMiddleware(TMVCStaticFilesMiddleware.Create( 
       '/static', 

@@ -81,24 +81,33 @@
         <DCCReference Include="Controllers\Controller.Categorias.pas"/>
         <DCCReference Include="UwmPrincipal.pas">
             <Form>WmPrincipal</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TWebModule</DesignClass>
         </DCCReference>
         <DCCReference Include="UdmPrincipal.pas">
             <Form>dmPrincipal</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Models\UCategorias.pas"/>
-        <DCCReference Include="Models\UEmpresas.pas"/>
-        <DCCReference Include="Models\UMovimentacoes.pas"/>
-        <DCCReference Include="Models\UUsuarios.pas"/>
+        <DCCReference Include="Models\Model.Categorias.pas"/>
+        <DCCReference Include="Models\Model.Empresas.pas"/>
+        <DCCReference Include="Models\Model.Movimentacoes.pas"/>
+        <DCCReference Include="Models\Model.Usuarios.pas"/>
         <DCCReference Include="Controllers\Controller.Empresas.pas"/>
         <DCCReference Include="Models\DAO\DAO.Categorias.pas"/>
         <DCCReference Include="Models\DAO\DAO.Empresas.pas"/>
         <DCCReference Include="Models\DAO\DAO.Movimentacoes.pas"/>
         <DCCReference Include="Models\DAO\DAO.Usuarios.pas"/>
         <DCCReference Include="Services\Service.Categorias.pas"/>
+        <DCCReference Include="Util\Util.Funcoes.pas"/>
+        <DCCReference Include="Models\Model.Resposta.pas"/>
+        <DCCReference Include="Services\Service.Empresas.pas"/>
+        <DCCReference Include="Services\Service.Movimentacoes.pas"/>
+        <DCCReference Include="Services\Service.Usuarios.pas"/>
+        <DCCReference Include="Controllers\Controller.Movimentacoes.pas"/>
+        <DCCReference Include="Controllers\Controller.Usuarios.pas"/>
+        <DCCReference Include="Controllers\Controller.ResumoDiario.pas"/>
+        <DCCReference Include="Controllers\Controller.Login.pas"/>
+        <DCCReference Include="Models\Model.Login.pas"/>
+        <DCCReference Include="Models\Model.ResumoDiario.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

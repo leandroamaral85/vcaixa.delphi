@@ -3,10 +3,11 @@ unit DAO.Empresas;
 interface 
 
 uses SqlExpr, SimpleDS, Classes, SysUtils, DateUtils,
-     StdCtrls, UEmpresas, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+     StdCtrls, Model.Empresas, FireDAC.Stan.Intf, FireDAC.Stan.Option,
      FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
      FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.PG,
-     FireDAC.Phys.PGDef, FireDAC.ConsoleUI.Wait, Data.DB, FireDAC.Comp.Client;
+     FireDAC.Phys.PGDef, FireDAC.ConsoleUI.Wait, Data.DB, FireDAC.Comp.Client,
+     System.Generics.Collections;
 
 type
    TEmpresasDao = Class 
@@ -19,80 +20,78 @@ type
          Function RetornaSqlDeleta : String;
       Public
          Constructor Create(pConexao : TFDConnection);
-         Function RetornaColecao : TColEmpresas;
-         Function Retorna(pId : Integer) : TEmpresas;
-         Function Insere(pEmpresas: TEmpresas) : Boolean;
-         Function InsereColecao(pEmpresas: TColEmpresas) : Boolean;
-         Function Atualiza(pEmpresas: TEmpresas) : Boolean;
+         Function RetornaColecao : TObjectList<TEmpresa>;
+         Function Retorna(pId : Integer) : TEmpresa;
+         Function Insere(pEmpresas: TEmpresa) : Boolean;
+         Function InsereColecao(pEmpresas: TObjectList<TEmpresa>) : Boolean;
+         Function Atualiza(pEmpresas: TEmpresa) : Boolean;
          Function Deleta(pId : Integer) : Boolean;
-         Function AtualizaColecao(pEmpresas: TColEmpresas):Boolean;
+         Function AtualizaColecao(pEmpresas: TObjectList<TEmpresa>):Boolean;
+         Function Existe(pId: Integer): Boolean;
       end;
 implementation 
 
 Function TEmpresasDao.RetornaSql : String;
 begin
    Result := 
-      'Select *      '+
-      'From Empresas ';
+      'SELECT *      '+
+      'FROM EMPRESAS '+
+      'ORDER BY ID   ';
 End;
 
 
 Function TEmpresasDao.RetornaSqlComChave : String;
 begin
    Result := 
-      'Select *          '+
-      'From Empresas     '+
-      'Where             '+
-      ' ID = :ID         ';
-
+      'SELECT *          '+
+      'FROM EMPRESAS     '+
+      'WHERE ID = :ID    ';
 End;
 
 Function TEmpresasDao.RetornaSqlInsert : String;
 begin
    Result := 
-      'INSERT INTO Empresas(Empresas.Nome, Empresas.Cnpj) '+
-      'VALUES (:Nome, :Cnpj)                              ';
+      'INSERT INTO EMPRESAS(NOME, CNPJ) '+
+      'VALUES (:NOME, :CNPJ)            ';
 End;
 
 Function TEmpresasDao.RetornaSqlUpdate : String;
 begin
    Result := 
-      'UPDATE Empresas SET     '+
-      'Empresas.Nome = :Nome,  '+
-      'Empresas.Cnpj = :Cnpj   '+
-      'Where                   '+
-      ' ID = :ID               ';
+      'UPDATE EMPRESAS   '+
+      'SET NOME = :NOME, '+
+      '    CNPJ = :CNPJ  '+
+      'WHERE ID = :ID    ';
 End;
 
 Function TEmpresasDao.RetornaSqlDeleta : String;
 begin
    Result :=
-     'Delete From Empresas '+
-     'Where                '+
-     ' ID = :ID            ';
+      'DELETE FROM EMPRESAS '+
+      'WHERE ID = :ID       ';
 end;
 
-function TEmpresasDao.RetornaColecao : TColEmpresas;
+function TEmpresasDao.RetornaColecao : TObjectList<TEmpresa>;
 var
    QueryEmpresas : TFDQuery;
-   ObjEmpresas : TEmpresas;
+   ObjEmpresas : TEmpresa;
 begin
    Result := nil;
    QueryEmpresas := TFDQuery.Create(Nil);
+   Result := TObjectList<TEmpresa>.Create;
    try
       QueryEmpresas.Connection := Self.vConexao;
       QueryEmpresas.Sql.Text := RetornaSql;
       QueryEmpresas.Open;
       if QueryEmpresas.IsEmpty then
          Exit;
-      Result := TColEmpresas.Create;
       while Not(QueryEmpresas).Eof do
       begin
-         ObjEmpresas := TEmpresas.Create;
+         ObjEmpresas := TEmpresa.Create;
          ObjEmpresas.Id    := QueryEmpresas.FieldByName('Id'  ).AsInteger;
          ObjEmpresas.Nome  := QueryEmpresas.FieldByName('Nome').AsString;
          ObjEmpresas.Cnpj  := QueryEmpresas.FieldByName('Cnpj').AsString;
-         Result.Adiciona(ObjEmpresas);
+         Result.Add(ObjEmpresas);
          QueryEmpresas.Next;
       end;
    finally
@@ -105,7 +104,7 @@ begin
    Self.vConexao := pConexao;
 end;
 
-function TEmpresasDao.Retorna(pId : Integer) : TEmpresas;
+function TEmpresasDao.Retorna(pId : Integer) : TEmpresa;
 var
    QueryEmpresas : TFDQuery;
 begin
@@ -118,7 +117,7 @@ begin
       QueryEmpresas.Open;
       if QueryEmpresas.IsEmpty then
          Exit;
-      Result := TEmpresas.Create;
+      Result := TEmpresa.Create;
       Result.Id    := QueryEmpresas.FieldByName('Id'  ).AsInteger;
       Result.Nome  := QueryEmpresas.FieldByName('Nome').AsString;
       Result.Cnpj  := QueryEmpresas.FieldByName('Cnpj').AsString;
@@ -127,7 +126,7 @@ begin
    end;
 end;
 
-Function TEmpresasDao.Insere(pEmpresas: TEmpresas) : Boolean;
+Function TEmpresasDao.Insere(pEmpresas: TEmpresa) : Boolean;
 var
    QueryEmpresas : TFDQuery;
 begin
@@ -153,20 +152,20 @@ begin
    Result := True;
 end;
 
-Function TEmpresasDao.InsereColecao(pEmpresas: TColEmpresas) : Boolean;
+Function TEmpresasDao.InsereColecao(pEmpresas: TObjectList<TEmpresa>) : Boolean;
 var
    indice: Integer;
 begin
    Result := False;
    for indice := 0 to pEmpresas.count -1 do
       begin
-      if not Self.Insere(pEmpresas.Retorna(Indice)) then
+      if not Self.Insere(pEmpresas[Indice]) then
          Exit;
    end;
    Result := True;
 end;
 
-Function TEmpresasDao.Atualiza(pEmpresas: TEmpresas) : Boolean;
+Function TEmpresasDao.Atualiza(pEmpresas: TEmpresa) : Boolean;
 var
    QueryEmpresas : TFDQuery;
 begin
@@ -216,18 +215,35 @@ begin
    Result := True;
 end;
 
-Function TEmpresasDao.AtualizaColecao(pEmpresas: TColEmpresas):Boolean;
+Function TEmpresasDao.AtualizaColecao(pEmpresas: TObjectList<TEmpresa>):Boolean;
 var
    indice: Integer;
 begin
    Result := True;
    for indice := 0 to pEmpresas.count -1 do
    begin
-      if not Self.Atualiza(pEmpresas.Retorna(Indice)) then
+      if not Self.Atualiza(pEmpresas[Indice]) then
       begin
          Result := False;
          Exit;
       end;
+   end;
+end;
+
+function TEmpresasDao.Existe(pId : Integer) : Boolean;
+var
+   QueryEmpresas : TFDQuery;
+begin
+   Result := False;
+   QueryEmpresas := TFDQuery.Create(Nil);
+   try
+      QueryEmpresas.Connection := Self.vConexao;
+      QueryEmpresas.Sql.Text := RetornaSqlComChave;
+      QueryEmpresas.ParamByName('ID').AsInteger := pID;
+      QueryEmpresas.Open;
+      Result := not QueryEmpresas.IsEmpty;
+   finally
+      FreeAndNil(QueryEmpresas);
    end;
 end;
 end.
