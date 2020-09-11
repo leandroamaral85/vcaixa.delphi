@@ -88,9 +88,9 @@ begin
    try
       QueryMovimentacoes.Connection := Self.vConexao;
       QueryMovimentacoes.Sql.Text :=
-        'SELECT *                      '+
-        'FROM MOVIMENTACOES            '+
-        'WHERE EMPRESA_ID = EMPRESA_ID ';
+        'SELECT *                       '+
+        'FROM MOVIMENTACOES             '+
+        'WHERE EMPRESA_ID = :EMPRESA_ID ';
       QueryMovimentacoes.ParamByName('EMPRESA_ID').AsInteger := pIdEmpresa;
       QueryMovimentacoes.Open;
       if QueryMovimentacoes.IsEmpty then
@@ -282,9 +282,10 @@ begin
    try
       QueryMovimentacoes.Connection := Self.vConexao;
       QueryMovimentacoes.Sql.Text :=
-         'SELECT FIRST 1 ID      '+
-         'FROM MOVIMENTACOES     '+
-         'WHERE EMPRESA_ID = :ID ';
+         'SELECT ID                '+
+         'FROM MOVIMENTACOES       '+
+         'WHERE EMPRESA_ID = :ID   '+
+         'LIMIT 1                  ';
       QueryMovimentacoes.ParamByName('ID').AsInteger := pId_Empresa;
       QueryMovimentacoes.Open;
       Result := not QueryMovimentacoes.IsEmpty;
@@ -302,9 +303,10 @@ begin
    try
       QueryMovimentacoes.Connection := Self.vConexao;
       QueryMovimentacoes.Sql.Text :=
-         'SELECT FIRST 1 ID      '+
-         'FROM MOVIMENTACOES     '+
-         'WHERE CATEGORIA_ID = :ID ';
+         'SELECT  ID               '+
+         'FROM MOVIMENTACOES       '+
+         'WHERE CATEGORIA_ID = :ID '+
+         'LIMIT 1                  ';
       QueryMovimentacoes.ParamByName('ID').AsInteger := pId_Categoria;
       QueryMovimentacoes.Open;
       Result := not QueryMovimentacoes.IsEmpty;
