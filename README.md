@@ -14,11 +14,12 @@ Para rodar em ambiente de desenvolvimento é necessário instalar o Delphi MVC F
 Para acessar os endpoints da API é necessário fazer o login. Para fins de testes, foi disponibilizado um usuário pré-cadastrado. Para efetuar o login, basta enviar uma requisição do tipo POST para o endpoint /login com e-mail e senha, conforme abaixo:
 ```json
 {
-    "nome": "Assessoria contábil"
+    "email": "teste@teste.com",
+    "senha": "12345678"
 }
 ```
 
-Ao fazer o login, serão devolvidos na resposta os dados do usuário e um token que deverá ser utilizado para acessar os demais endpoints. A autenticação utilizada é do tipo Bearer token. O token tem a duração de 1 hora:
+Ao fazer o login, serão devolvidos na resposta os dados do usuário e um token que deverá ser utilizado para acessar os demais endpoints. A autenticação utilizada é do tipo "Bearer token" e o token tem a duração de 1 hora:
 ```json
 {
     "id": 1,
