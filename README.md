@@ -6,7 +6,7 @@ Este projeto é composto por uma API que permite ao usuário cadastrar movimenta
 ## Como rodar:
 A API está hospedada na AWS e está disponível através do link: http://ec2-3-84-79-209.compute-1.amazonaws.com:8080/api
 
-Para rodar em ambiente de desenvolvimento é necessário instalar o Delphi MVC Framework que está disponível através do link: https://github.com/danieleteti/delphimvcframework. Instale o PostgreSQL versão 9.4 (utilizei a versão de 32 bits). Defina o usuário "postgres" e senha "postgres" e crie o banco de dados de nome "api-caixa". Após isso, faça o restore do arquivo Banco.backup que se encontra na pasta "Banco". O sistema tentará se conectar no servidor localhost e porta 5432 (padrão do PostgreSQL). 
+Para rodar em ambiente de desenvolvimento é necessário instalar o Delphi MVC Framework que está disponível através do link: https://github.com/danieleteti/delphimvcframework. Instale o PostgreSQL versão 9.4 (utilizei a versão de 32 bits). Defina o usuário "postgres" e senha "postgres" e crie o banco de dados de nome "api-caixa". Após isso, faça o restore do arquivo Banco.backup que se encontra na pasta "Banco". O sistema tentará se conectar no servidor localhost e porta 5432 (padrão do PostgreSQL). Para executar, o sistema depende das DLLs intl.dll, libeay32.dll, libpq.dll e ssleay32.dll que se encontram na pasta Win32/Debug.
 
 ## Como usar:
 
