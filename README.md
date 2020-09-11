@@ -1,7 +1,7 @@
 # vcaixa.delphi
 ## API de Controle de Caixa
 
-Este projeto é composto por uma API que permite ao usuário cadastrar movimentações de caixa e obter um resumo diário destas movimentações. Ela foi desenvolvida em Delphi, utilizando o framework Delphi MVC Framework (Open Source) e utiliza o sistema de banco de dados PostgreSQL.
+Este projeto é composto por uma API que permite ao usuário cadastrar movimentações de caixa e obter um resumo diário destas movimentações. Ela foi desenvolvida em Delphi (versão Community Edition 10.3.3 Rio), utilizando o framework Delphi MVC Framework (Open Source) e o sistema de banco de dados PostgreSQL.
 
 ## Como rodar:
 A API está hospedada na AWS e está disponível através do link: http://ec2-3-84-79-209.compute-1.amazonaws.com:8080/api
