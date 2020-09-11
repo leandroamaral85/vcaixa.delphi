@@ -15,12 +15,12 @@ type
     constructor Create;
     destructor Destroy; override;
     class function getInstancia: TUsuariosService;
-    function CriaUsuario(pUsuario: TUsuario) : Boolean;
+    function CriaUsuario(pIdEmpresa: Integer; pUsuario: TUsuario) : Boolean;
     function BuscaTodos: TObjectList<TUsuario>;
     function BuscaPeloID(pID: Integer): TUsuario;
     function BuscaPeloEmail(pEmail: String): TUsuario;
-    function AtualizaUsuario(pID: Integer; pUsuario: TUsuario): Boolean;
-    function ExcluiUsuario(pID: Integer): Boolean;
+    function AtualizaUsuario(pID: Integer; pIdEmpresa: Integer; pUsuario: TUsuario): Boolean;
+    function ExcluiUsuario(pID: Integer; pIdEmpresa: Integer): Boolean;
   end;
 
 implementation
@@ -42,8 +42,9 @@ begin
    Result := _instancia;
 end;
 
-function TUsuariosService.CriaUsuario(pUsuario: TUsuario): Boolean;
+function TUsuariosService.CriaUsuario(pIdEmpresa: Integer; pUsuario: TUsuario): Boolean;
 begin
+   pUsuario.empresa_id := pIdEmpresa;
    if Valida(pUsuario) then
       Result := vUsuariosDAO.Insere(pUsuario);
 end;
@@ -69,25 +70,44 @@ begin
       raise Exception.Create('Usuário não encontrado.');
 end;
 
-function TUsuariosService.AtualizaUsuario(pID: Integer;
+function TUsuariosService.AtualizaUsuario(pID: Integer; pIdEmpresa: Integer;
    pUsuario: TUsuario): Boolean;
+var
+   vUsuario : TUsuario;
 begin
-   if not vUsuariosDAO.Existe(pId) then
-      raise Exception.Create(MSG_NAO_ENCONTRADO);
+   try
+      vUsuario := vUsuariosDAO.Retorna(pID);
+      if vUsuario = nil then
+         raise Exception.Create(MSG_NAO_ENCONTRADO);
 
-   if Valida(pUsuario) then
-   begin
-      pUsuario.Id := pID;
-      Result := vUsuariosDAO.Atualiza(pUsuario);
+      if vUsuario.empresa_id <> pIdEmpresa then
+         raise Exception.Create('Este usuário pertence a outra empresa.');
+
+      if Valida(pUsuario) then
+         Result := vUsuariosDAO.Atualiza(pUsuario);
+   finally
+      if Assigned(vUsuario) then
+         FreeAndNil(vUsuario);
    end;
 end;
 
-function TUsuariosService.ExcluiUsuario(pID: Integer): Boolean;
+function TUsuariosService.ExcluiUsuario(pID: Integer; pIdEmpresa: Integer): Boolean;
+var
+   vUsuario : TUsuario;
 begin
-   if not vUsuariosDAO.Existe(pId) then
-      raise Exception.Create(MSG_NAO_ENCONTRADO);
+   try
+      vUsuario := vUsuariosDAO.Retorna(pID);
+      if vUsuario = nil then
+         raise Exception.Create(MSG_NAO_ENCONTRADO);
 
-   Result := vUsuariosDAO.Deleta(pID);
+      if vUsuario.empresa_id <> pIdEmpresa then
+         raise Exception.Create('Este usuário pertence a outra empresa.');
+
+      Result := vUsuariosDAO.Deleta(pID);
+   finally
+      if Assigned(vUsuario) then
+         FreeAndNil(vUsuario);
+   end;
 end;
 
 destructor TUsuariosService.Destroy;

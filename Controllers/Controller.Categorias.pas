@@ -40,7 +40,7 @@ implementation
 
 uses
   System.SysUtils, MVCFramework.Logger, System.StrUtils, Service.Categorias,
-  Model.Categorias, Model.Resposta, System.Generics.Collections, Util.Funcoes;
+  Model.Categorias, Model.Resposta, System.Generics.Collections, Util.Token;
 
 
 procedure TCategoriasController.OnAfterAction(Context: TWebContext; const AActionName: string);
@@ -50,7 +50,7 @@ end;
 
 procedure TCategoriasController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
 begin
-   if not TFuncoesUtil.ValidaToken(Context.Request.Headers['Authorization']) then
+   if not TTokenUtil.ValidaToken(Context.Request.Headers['Authorization']) then
    begin
       Render(401, TResposta.MontaResposta('Token inválido ou usuário não autenticado.'),
          True);

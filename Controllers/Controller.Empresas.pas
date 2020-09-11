@@ -21,10 +21,6 @@ type
     [MVCHTTPMethod([httpGET])]
     procedure GetEmpresa(id: Integer);
 
-    [MVCPath('/empresas')]
-    [MVCHTTPMethod([httpPOST])]
-    procedure CreateEmpresa;
-
     [MVCPath('/empresas/($id)')]
     [MVCHTTPMethod([httpPUT])]
     procedure UpdateEmpresa(id: Integer);
@@ -70,33 +66,6 @@ begin
       On E: Exception do
          Render(400, TResposta.MontaResposta('Não foi possível obter a '+
             'empresa: ' + E.Message), True);
-   end;
-end;
-
-procedure TEmpresasController.CreateEmpresa;
-var
-   vEmpresa: TEmpresa;
-begin
-   try
-      vEmpresa := nil;
-      try
-         if Trim(Context.Request.Body) = '' then
-            raise Exception.Create('Não foram informados dados para a operação');
-
-         vEmpresa := Context.Request.BodyAs<TEmpresa>;
-         if TEmpresasService.getInstancia.CriaEmpresa(vEmpresa) then
-            Render(201, TResposta.MontaResposta('Empresa cadastrada com sucesso'),
-               True);
-      except
-         On E: Exception do
-         begin
-            Render(400, TResposta.MontaResposta('Não foi possível cadastrar a '+
-               'empresa: ' + E.Message), True);
-         end;
-      end;
-   finally
-      if Assigned(vEmpresa) then
-         FreeAndNil(vEmpresa);
    end;
 end;
 

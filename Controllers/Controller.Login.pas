@@ -17,13 +17,18 @@ type
     [MVCHTTPMethod([httpPOST])]
     procedure DoLogin;
 
+    [MVCPath('/registro')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure DoRegistro;
+
   end;
 
 implementation
 
 uses
   System.SysUtils, MVCFramework.Logger, System.StrUtils, Service.Usuarios,
-  Model.Resposta, Model.Login, Model.Usuarios, MVCFramework.JWT, Util.Funcoes;
+  Model.Resposta, Model.Login, Model.Usuarios, MVCFramework.JWT, Util.Token,
+  Model.Registro, Service.Empresas, Model.Empresas;
 
 procedure TLoginController.OnAfterAction(Context: TWebContext; const AActionName: string);
 begin
@@ -63,7 +68,7 @@ begin
             vLoginResposta.id := vUsuario.id;
             vLoginResposta.nome := vUsuario.nome;
             vLoginResposta.email := vUsuario.email;
-            vLoginResposta.token := TFuncoesUtil.RetornaToken(vUsuario);
+            vLoginResposta.token := TTokenUtil.RetornaToken(vUsuario);
             Render(200, vLoginResposta, True);
          end
          else
@@ -80,4 +85,38 @@ begin
          FreeAndNil(vLogin);
    end;
 end;
+
+procedure TLoginController.DoRegistro;
+var
+   vRegistro: TRegistro;
+   vEmpresa: TEmpresa;
+begin
+   try
+      vRegistro := nil;
+      vEmpresa := nil;
+      try
+         if Trim(Context.Request.Body) = '' then
+            raise Exception.Create('Não foram informados dados para a operação');
+
+         vRegistro := Context.Request.BodyAs<TRegistro>;
+         if TEmpresasService.getInstancia.CriaEmpresa(vRegistro.empresa) then
+         begin
+            vEmpresa := TEmpresasService.getInstancia.BuscaPeloCNPJ(vRegistro.empresa.cnpj);
+            if TUsuariosService.getInstancia.CriaUsuario(vEmpresa.id,vRegistro.usuario) then
+               Render(201, TResposta.MontaResposta('Registro efetuado com sucesso. '+
+                  'Por favor, faça o login.'), True);
+         end;
+      except
+         On E: Exception do
+            Render(400, TResposta.MontaResposta('Não foi possível efetuar o registro: '+
+               E.Message), True);
+      end;
+   finally
+      if Assigned(vRegistro) then
+         FreeAndNil(vRegistro);
+      if Assigned(vEmpresa) then
+         FreeAndNil(vEmpresa);
+   end;
+end;
+
 end.

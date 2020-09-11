@@ -18,7 +18,7 @@ type
     destructor Destroy; override;
     class function getInstancia: TMovimentacoesService;
     function CriaMovimentacoes(pIDEmpresa: Integer; pMovimentacao: TMovimentacao) : Boolean;
-    function BuscaTodos: TObjectList<TMovimentacao>;
+    function BuscaTodos(pIdEmpresa: Integer): TObjectList<TMovimentacao>;
     function BuscaPeloID(pID: Integer): TMovimentacao;
     function AtualizaMovimentacoes(pID, pIdEmpresa: Integer; pMovimentacao: TMovimentacao): Boolean;
     function ExcluiMovimentacoes(pID, pIdEmpresa: Integer): Boolean;
@@ -53,9 +53,9 @@ begin
       Result := vMovimentacoesDAO.Insere(pMovimentacao);
 end;
 
-function TMovimentacoesService.BuscaTodos: TObjectList<TMovimentacao>;
+function TMovimentacoesService.BuscaTodos(pIdEmpresa: Integer): TObjectList<TMovimentacao>;
 begin
-   Result := vMovimentacoesDAO.RetornaColecao;
+   Result := vMovimentacoesDAO.RetornaColecao(pIdEmpresa);
 end;
 
 function TMovimentacoesService.BuscaPeloID(pID : Integer): TMovimentacao;

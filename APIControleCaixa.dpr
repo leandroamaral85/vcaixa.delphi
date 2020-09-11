@@ -26,7 +26,6 @@ uses
   DAO.Movimentacoes in 'Models\DAO\DAO.Movimentacoes.pas',
   DAO.Usuarios in 'Models\DAO\DAO.Usuarios.pas',
   Service.Categorias in 'Services\Service.Categorias.pas',
-  Util.Funcoes in 'Util\Util.Funcoes.pas',
   Model.Resposta in 'Models\Model.Resposta.pas',
   Service.Empresas in 'Services\Service.Empresas.pas',
   Service.Movimentacoes in 'Services\Service.Movimentacoes.pas',
@@ -36,7 +35,9 @@ uses
   Controller.ResumoDiario in 'Controllers\Controller.ResumoDiario.pas',
   Controller.Login in 'Controllers\Controller.Login.pas',
   Model.Login in 'Models\Model.Login.pas',
-  Model.ResumoDiario in 'Models\Model.ResumoDiario.pas';
+  Model.ResumoDiario in 'Models\Model.ResumoDiario.pas',
+  Util.Token in 'Util\Util.Token.pas',
+  Model.Registro in 'Models\Model.Registro.pas';
 
 {$R *.res}
 

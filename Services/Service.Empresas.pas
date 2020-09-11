@@ -19,6 +19,7 @@ type
     function CriaEmpresa(pEmpresa: TEmpresa) : Boolean;
     function BuscaTodos: TObjectList<TEmpresa>;
     function BuscaPeloID(pID: Integer): TEmpresa;
+    function BuscaPeloCNPJ(pCNPJ: String): TEmpresa;
     function AtualizaEmpresa(pID: Integer; pEmpresa: TEmpresa): Boolean;
     function ExcluiEmpresa(pID: Integer): Boolean;
   end;
@@ -44,9 +45,23 @@ begin
 end;
 
 function TEmpresasService.CriaEmpresa(pEmpresa: TEmpresa): Boolean;
+var
+   vEmpresa : TEmpresa;
 begin
-   if Valida(pEmpresa) then
+   vEmpresa := nil;
+   try
+      if not Valida(pEmpresa) then
+         Exit;
+
+      vEmpresa := BuscaPeloCNPJ(pEmpresa.cnpj);
+      if vEmpresa <> nil then
+         raise Exception.Create('Esta empresa já está cadastrada.');
+
       Result := vEmpresasDAO.Insere(pEmpresa);
+   finally
+      if Assigned(vEmpresa) then
+         FreeAndNil(vEmpresa);
+   end;
 end;
 
 function TEmpresasService.BuscaTodos: TObjectList<TEmpresa>;
@@ -60,6 +75,11 @@ begin
 
    if Result = nil then
       raise Exception.Create(MSG_NAO_ENCONTRADO);
+end;
+
+function TEmpresasService.BuscaPeloCNPJ(pCNPJ : String): TEmpresa;
+begin
+   Result := vEmpresasDAO.RetornaPeloCNPJ(pCNPJ);
 end;
 
 function TEmpresasService.AtualizaEmpresa(pID: Integer;

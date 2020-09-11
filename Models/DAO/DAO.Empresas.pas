@@ -22,6 +22,7 @@ type
          Constructor Create(pConexao : TFDConnection);
          Function RetornaColecao : TObjectList<TEmpresa>;
          Function Retorna(pId : Integer) : TEmpresa;
+         Function RetornaPeloCNPJ(pCNPJ : String) : TEmpresa;
          Function Insere(pEmpresas: TEmpresa) : Boolean;
          Function InsereColecao(pEmpresas: TObjectList<TEmpresa>) : Boolean;
          Function Atualiza(pEmpresas: TEmpresa) : Boolean;
@@ -114,6 +115,31 @@ begin
       QueryEmpresas.Connection := Self.vConexao;
       QueryEmpresas.Sql.Text := RetornaSqlComChave;
       QueryEmpresas.ParamByName('ID').AsInteger := pID;
+      QueryEmpresas.Open;
+      if QueryEmpresas.IsEmpty then
+         Exit;
+      Result := TEmpresa.Create;
+      Result.Id    := QueryEmpresas.FieldByName('Id'  ).AsInteger;
+      Result.Nome  := QueryEmpresas.FieldByName('Nome').AsString;
+      Result.Cnpj  := QueryEmpresas.FieldByName('Cnpj').AsString;
+   finally
+      FreeAndNil(QueryEmpresas);
+   end;
+end;
+
+function TEmpresasDao.RetornaPeloCNPJ(pCNPJ : String) : TEmpresa;
+var
+   QueryEmpresas : TFDQuery;
+begin
+   Result := Nil;
+   QueryEmpresas := TFDQuery.Create(Nil);
+   try
+      QueryEmpresas.Connection := Self.vConexao;
+      QueryEmpresas.Sql.Text :=
+         'SELECT *           '+
+         'FROM EMPRESAS      '+
+         'WHERE CNPJ = :CNPJ ';
+      QueryEmpresas.ParamByName('CNPJ').AsString := pCNPJ;
       QueryEmpresas.Open;
       if QueryEmpresas.IsEmpty then
          Exit;

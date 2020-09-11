@@ -20,7 +20,7 @@ type
          Function RetornaSqlDeleta : String;
       Public
          Constructor Create(pConexao : TFDConnection);
-         Function RetornaColecao : TObjectList<TMovimentacao>;
+         Function RetornaColecao(pIdEmpresa : Integer) : TObjectList<TMovimentacao>;
          Function Retorna(pId : Integer) : TMovimentacao;
          Function Insere(pMovimentacoes: TMovimentacao) : Boolean;
          Function InsereColecao(pMovimentacoes: TObjectList<TMovimentacao>) : Boolean;
@@ -77,7 +77,7 @@ begin
       'WHERE ID = :ID             ';
 end;
 
-function TMovimentacoesDao.RetornaColecao : TObjectList<TMovimentacao>;
+function TMovimentacoesDao.RetornaColecao(pIdEmpresa : Integer) : TObjectList<TMovimentacao>;
 var
    QueryMovimentacoes : TFDQuery;
    ObjMovimentacoes : TMovimentacao;
@@ -87,7 +87,11 @@ begin
    Result := TObjectList<TMovimentacao>.Create;
    try
       QueryMovimentacoes.Connection := Self.vConexao;
-      QueryMovimentacoes.Sql.Text := RetornaSql;
+      QueryMovimentacoes.Sql.Text :=
+        'SELECT *                      '+
+        'FROM MOVIMENTACOES            '+
+        'WHERE EMPRESA_ID = EMPRESA_ID ';
+      QueryMovimentacoes.ParamByName('EMPRESA_ID').AsInteger := pIdEmpresa;
       QueryMovimentacoes.Open;
       if QueryMovimentacoes.IsEmpty then
          Exit;

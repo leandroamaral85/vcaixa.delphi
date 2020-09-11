@@ -39,7 +39,7 @@ implementation
 
 uses
   System.SysUtils, MVCFramework.Logger, System.StrUtils, Service.Usuarios,
-  Model.Usuarios, Model.Resposta, Util.Funcoes;
+  Model.Usuarios, Model.Resposta, Util.Token;
 
 procedure TUsuariosController.OnAfterAction(Context: TWebContext; const AActionName: string);
 begin
@@ -48,7 +48,7 @@ end;
 
 procedure TUsuariosController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
 begin
-   if not TFuncoesUtil.ValidaToken(Context.Request.Headers['Authorization']) then
+   if not TTokenUtil.ValidaToken(Context.Request.Headers['Authorization']) then
    begin
       Render(401, TResposta.MontaResposta('Token inválido ou usuário não autenticado.'),
          True);
@@ -92,7 +92,9 @@ begin
             raise Exception.Create('Não foram informados dados para a operação');
 
          vUsuario := Context.Request.BodyAs<TUsuario>;
-         if TUsuariosService.getInstancia.CriaUsuario(vUsuario) then
+         if TUsuariosService.getInstancia.CriaUsuario(
+               TTokenUtil.RetornaDadosToken(Context.Request.Headers['Authorization']).vIdEmpresa,
+               vUsuario) then
             Render(201, TResposta.MontaResposta('Usuário cadastrado com sucesso'),
                True);
       except
@@ -119,7 +121,9 @@ begin
             raise Exception.Create('Não foram informados dados para a operação');
 
          vUsuario := Context.Request.BodyAs<TUsuario>;
-         if TUsuariosService.getInstancia.AtualizaUsuario(id, vUsuario) then
+         if TUsuariosService.getInstancia.AtualizaUsuario(id,
+               TTokenUtil.RetornaDadosToken(Context.Request.Headers['Authorization']).vIdEmpresa,
+               vUsuario) then
             Render(200, TResposta.MontaResposta('Usuário atualizado com sucesso'),
                True);
       except
@@ -138,7 +142,8 @@ end;
 procedure TUsuariosController.DeleteUsuario(id: Integer);
 begin
    try
-      if TUsuariosService.getInstancia.ExcluiUsuario(id) then
+      if TUsuariosService.getInstancia.ExcluiUsuario(id,
+            TTokenUtil.RetornaDadosToken(Context.Request.Headers['Authorization']).vIdEmpresa) then
          Render(200, TResposta.MontaResposta('Usuário excluído com sucesso'),
             True);
    except
