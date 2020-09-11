@@ -35,7 +35,7 @@ implementation
 
 uses
   System.SysUtils, MVCFramework.Logger, System.StrUtils, Service.Empresas,
-  Model.Empresas, Model.Resposta;
+  Model.Empresas, Model.Resposta, Util.Token;
 
 procedure TEmpresasController.OnAfterAction(Context: TWebContext; const AActionName: string);
 begin
@@ -44,6 +44,14 @@ end;
 
 procedure TEmpresasController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
 begin
+   if not TTokenUtil.ValidaToken(Context.Request.Headers['Authorization']) then
+   begin
+      Render(401, TResposta.MontaResposta('Token inválido ou usuário não autenticado.'),
+         True);
+      Handled := True;
+      Exit;
+   end;
+
    inherited;
 end;
 

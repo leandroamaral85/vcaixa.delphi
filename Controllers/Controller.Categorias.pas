@@ -13,7 +13,6 @@ type
     procedure OnAfterAction(Context: TWebContext; const AActionName: string); override;
 
   public
-    //Sample CRUD Actions for a "Customer" entity
     [MVCPath('/categorias')]
     [MVCHTTPMethod([httpGET])]
     procedure GetCategorias;
